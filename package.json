@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "echo 'No build step for backend'",
+    "dev": "netlify dev",
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "",
@@ -17,5 +20,8 @@
     "express": "^4.21.2",
     "moment": "^2.30.1",
     "pg": "^8.13.1"
+  },
+  "devDependencies": {
+    "netlify-cli": "^10.0.0"
   }
 }
