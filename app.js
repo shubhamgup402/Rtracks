@@ -1,16 +1,11 @@
+require("dotenv").config(); // Load environment variables from .env file
 const express = require('express');
-const { Pool } = require('pg');
+const { neon } = require("@neondatabase/serverless");
 const app = express();
 const port = 3000;
 
-// Configure the database connection pool
-const pool = new Pool({
-  host: 'localhost',
-  port: 5432,
-  user: 'postgres',
-  password: 'blogger@123$#',
-  database: 'Rtrack',
-});
+// Initialize Neon connection using DATABASE_URL from environment
+const sql = neon(process.env.DATABASE_URL);
 
 // Middleware to parse incoming JSON and URL-encoded data
 app.use(express.json());
@@ -27,19 +22,17 @@ app.get('/', async (req, res) => {
   const searchTerm = req.query.searchTerm || ''; // Get search term from query string
 
   try {
-    const result = await pool.query(
-      `
+    // Query using Neon serverless
+    const result = await sql`
       SELECT 
         id, name, transaction_date, order_action, company, 
         quantity, total_invested 
       FROM transactions 
-      WHERE name ILIKE $1 OR company ILIKE $1 
+      WHERE name ILIKE ${`%${searchTerm}%`} OR company ILIKE ${`%${searchTerm}%`} 
       ORDER BY transaction_date DESC
-      `,
-      [`%${searchTerm}%`]
-    );
-
-    const transactions = result.rows;
+    `;
+    
+    const transactions = result;
     res.render('index', { transactions, searchTerm });
   } catch (error) {
     console.error('Error fetching transactions:', error);
@@ -59,14 +52,12 @@ app.post('/add/:name', async (req, res) => {
   const name = req.params.name;
   const total_invested = quantity * average_price;
 
-  const query = `
-    INSERT INTO transactions (name, transaction_date, order_action, company, quantity, average_price, total_invested, remark) 
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-  `;
-  const values = [name, transaction_date, order_action, company, quantity, average_price, total_invested, remark];
-
   try {
-    await pool.query(query, values);
+    // Insert query using Neon serverless
+    await sql`
+      INSERT INTO transactions (name, transaction_date, order_action, company, quantity, average_price, total_invested, remark) 
+      VALUES (${name}, ${transaction_date}, ${order_action}, ${company}, ${quantity}, ${average_price}, ${total_invested}, ${remark})
+    `;
     res.redirect('/');
   } catch (error) {
     console.error('Error adding transaction:', error);
