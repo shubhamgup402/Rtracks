@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Transaction</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+
+  <div class="container mt-5">
+    <h1 class="text-center">Add Transaction for <%= name %></h1>
+
+    <!-- Form to Add Transaction -->
+    <form action="/add/<%= name %>" method="POST">
+      <div class="row mb-3">
+        <!-- Transaction Date -->
+        <div class="col-md-6">
+          <label for="transaction_date" class="form-label">Transaction Date</label>
+          <input type="date" class="form-control" id="transaction_date" name="transaction_date" required>
+        </div>
+        <!-- Order Action -->
+        <div class="col-md-6">
+          <label for="order_action" class="form-label">Order Action</label>
+          <select class="form-control" id="order_action" name="order_action" required>
+            <option value="BUY" selected>BUY</option>
+            <option value="SELL">SELL</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row mb-3">
+        <!-- Company -->
+        <div class="col-md-4">
+          <label for="company" class="form-label">Company</label>
+          <input type="text" class="form-control" id="company" name="company" required>
+        </div>
+        <!-- Quantity -->
+        <div class="col-md-4">
+          <label for="quantity" class="form-label">Quantity</label>
+          <input type="number" class="form-control" id="quantity" name="quantity" required>
+        </div>
+        <!-- Average Price -->
+        <div class="col-md-4">
+          <label for="average_price" class="form-label">Average Price</label>
+          <input type="number" step="0.01" class="form-control" id="average_price" name="average_price" required>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="total_invested" class="form-label">Total Invested</label>
+        <input type="number" step="0.01" class="form-control" id="total_invested" name="total_invested" readonly>
+      </div>
+
+      <div class="mb-3">
+        <label for="remark" class="form-label">Remark</label>
+        <textarea class="form-control" id="remark" name="remark"></textarea>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Add Record</button>
+    </form>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Function to update total_invested based on quantity and average_price
+    function updateTotalInvested() {
+      const quantity = parseFloat(document.getElementById('quantity').value);
+      const averagePrice = parseFloat(document.getElementById('average_price').value);
+      
+      if (!isNaN(quantity) && !isNaN(averagePrice)) {
+        const totalInvested = quantity * averagePrice;
+        document.getElementById('total_invested').value = totalInvested.toFixed(2);
+      }
+    }
+
+    // Add event listeners to quantity and average_price fields
+    document.getElementById('quantity').addEventListener('input', updateTotalInvested);
+    document.getElementById('average_price').addEventListener('input', updateTotalInvested);
+  </script>
+</body>
+</html>

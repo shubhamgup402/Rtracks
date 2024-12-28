@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transaction Records</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <script>
+    function filterRecords() {
+      const filterName = document.getElementById('name-dropdown').value.toLowerCase();
+      const filterCompany = document.getElementById('filter-company').value.toLowerCase();
+      const filterDate = document.getElementById('filter-date').value;
+
+      const rows = document.querySelectorAll('tbody tr');
+      
+      rows.forEach(row => {
+        const name = row.cells[1].textContent.toLowerCase();
+        const company = row.cells[4].textContent.toLowerCase();
+        const date = row.cells[2].textContent;
+
+        const matchName = filterName ? name.includes(filterName) : true;
+        const matchCompany = company.includes(filterCompany);
+        const matchDate = filterDate ? date.includes(filterDate) : true;
+
+        if (matchName && matchCompany && matchDate) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    }
+
+    function resetFilters() {
+      document.getElementById('name-dropdown').value = '';
+      document.getElementById('filter-company').value = '';
+      document.getElementById('filter-date').value = '';
+      filterRecords();
+    }
+  </script>
+</head>
+<body>
+
+  <div class="container mt-5">
+    <h1 class="text-center">Transaction Records</h1>
+
+    <!-- Filter and Search (Side by Side) -->
+    <div class="mb-4 row">
+      <div class="col-md-4">
+        <label for="name-dropdown" class="form-label">Filter by Name</label>
+        <select class="form-select" id="name-dropdown" onchange="filterRecords()">
+          <option value="">Select Name</option>
+          <option value="Shubham">Shubham</option>
+          <option value="Dhruv">Dhruv</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label for="filter-company" class="form-label">Filter by Company</label>
+        <input type="text" class="form-control" id="filter-company" onkeyup="filterRecords()" placeholder="Search by Company">
+      </div>
+      <div class="col-md-4">
+        <label for="filter-date" class="form-label">Filter by Date</label>
+        <input type="date" class="form-control" id="filter-date" onchange="filterRecords()">
+      </div>
+    </div>
+
+    <!-- Buttons to Choose Shubham or Dhruv -->
+    <div class="text-center mb-4">
+      <button class="btn btn-primary" onclick="window.location.href='/add/Shubham'">Shubham</button>
+      <button class="btn btn-secondary" onclick="window.location.href='/add/Dhruv'">Dhruv</button>
+    </div>
+
+    <!-- Search and Reset Buttons -->
+    <div class="text-center mb-4">
+      <button class="btn btn-success" onclick="filterRecords()">Search</button>
+      <button class="btn btn-warning" onclick="resetFilters()">Reset</button>
+    </div>
+
+    <h3 class="mt-4 text-center">Previous Records</h3>
+    <!-- Transactions Table -->
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Date</th>
+          <th>Order Action</th>
+          <th>Company</th>
+          <th>Quantity</th>
+          <th>Total Invested</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% transactions.forEach(transaction => { %>
+          <tr>
+            <td><%= transaction.id %></td>
+            <td><%= transaction.name %></td>
+            <td><%= new Date(transaction.transaction_date).toLocaleDateString('en-IN') %></td>
+            <td><%= transaction.order_action %></td>
+            <td><%= transaction.company %></td>
+            <td><%= transaction.quantity %></td>
+            <td><%= transaction.total_invested %></td>
+          </tr>
+        <% }); %>   
+      </tbody>
+    </table>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
